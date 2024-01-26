@@ -1,0 +1,24 @@
+# Ignore config.py file
+config.py
+
+# Python-related files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyc
+*.pyo
+*.pyc
+*.pyo
+*.pyz
+*.pyzw
+*.py~
+
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Virtual environment
+venv/
+env/

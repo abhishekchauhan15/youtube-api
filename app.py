@@ -1,4 +1,3 @@
-# app.py
 from flask import Flask, jsonify, request
 from flask_pymongo import PyMongo
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -11,14 +10,15 @@ from src.youtube import fetch_videos_from_youtube, store_videos_in_mongodb
 app = Flask(__name__)
 app.config["MONGO_URI"] = MONGO_URI
 mongo = PyMongo(app)
-
+db = mongo_client['youtube_data'] 
+videos_collection = db['videos']
 # Background job to fetch and store videos
 def fetch_and_store_videos():
     print("Getting the new videos...")
     videos = fetch_videos_from_youtube(API_KEYS, SEARCH_QUERY)
     store_videos_in_mongodb(mongo, videos)
 
-# indexing
+# Create indexes on the videos collection
 if mongo.db is not None:
     mongo.db.videos.create_index([('published_datetime', -1)])
     mongo.db.videos.create_index([('video_id', 1)])
@@ -55,6 +55,21 @@ def create_video_list_response(videos):
         'video_id': video['video_id'],
     } for video in videos]
     
+# API to search videos  
+@app.route('/search', methods=['GET'])
+def search_videos():
+    query = request.args.get('query', '')
+
+    if mongo.db is not None:
+        
+        mongo.db.videos.create_index([('title', 'text')])
+        videos = mongo.db.videos.find({"$text": {"$search": query}}).sort('published_datetime', -1)
+
+        videos_list = create_video_list_response(videos)
+
+        return jsonify({'videos': videos_list})
+    else:
+        return jsonify({'error': 'MongoDB connection not established'})
 
 if __name__ == '__main__':
     scheduler = BackgroundScheduler()
