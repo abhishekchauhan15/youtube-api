@@ -1,3 +1,3 @@
-MONGO_URI = "mongodb+srv://test:test@cluster0.9wilqlv.mongodb.net/<database>?retryWrites=true&w=majority"
-API_KEYS = ['AIzaSyDqdMUNrZRamYHtNmUIMg0DfbgTlIfvXr4']
+MONGO_URI = "your uri"
+API_KEYS = ['key1', 'key2', 'key3']
 SEARCH_QUERY = 'vlogs'
